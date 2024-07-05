@@ -1,0 +1,31 @@
+<table>
+    <tr>
+        <th>货号</th>
+        <th>品名</th>
+        <th>尺码</th>
+        <th>价格</th>
+        <th>会员号码</th>
+        <th>操作</th>
+    </tr>
+    {% for sale in sales.items %}
+    <tr>
+        <td>{{ sale.product_id }}</td>
+        <td>{{ sale.name }}</td>
+        <td>{{ sale.size }}</td>
+        <td>{{ sale.total_price }}</td>
+        <td>{{ sale.member_phone }}</td>
+        <td>
+            <button onclick="showReturnModal('{{ sale.id }}', '{{ sale.product_id }}', '{{ sale.name }}', '{{ sale.size }}', '{{ sale.total_price }}')">退货</button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<div>
+    {% if sales.has_prev %}
+    <a href="{{ url_for('reports.report_details', page=sales.prev_num) }}" onclick="fetchData('details?page={{ sales.prev_num }}'); return false;">上一页</a>
+    {% endif %}
+    <span>第 {{ sales.page }} 页，共 {{ sales.pages }} 页</span>
+    {% if sales.has_next %}
+    <a href="{{ url_for('reports.report_details', page=sales.next_num) }}" onclick="fetchData('details?page={{ sales.next_num }}'); return false;">下一页</a>
+    {% endif %}
+</div>

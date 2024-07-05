@@ -1,0 +1,8 @@
+Flask~=3.0.3
+Flask-SQLAlchemy
+Flask-Migrate
+mysqlclient
+
+alembic~=1.13.2
+pandas~=2.1.1
+Werkzeug~=3.0.3

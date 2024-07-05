@@ -1,0 +1,20 @@
+<table>
+    <tr>
+        <th>货号</th>
+        <th>品名</th>
+        <th>尺码</th>
+        <th>价格</th>
+        <th>会员号码</th>
+        <th>退货时间</th>
+    </tr>
+    {% for item in returned %}
+    <tr>
+        <td>{{ item.product_id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.size }}</td>
+        <td>{{ item.total_price }}</td>
+        <td>{{ item.member_phone }}</td>
+        <td>{{ item.timestamp }}</td>
+    </tr>
+    {% endfor %}
+</table>

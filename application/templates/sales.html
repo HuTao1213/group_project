@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>销售管理</title>
+</head>
+<body>
+    <h1>销售管理</h1>
+    <form method="POST" action="{{ url_for('sales.manage_sales') }}">
+        <label for="barcode">商品条码:</label>
+        <input type="text" id="barcode" name="barcode">
+        <button type="submit">确认</button>
+    </form>
+
+    {% if products %}
+    <h2>商品信息</h2>
+    <ul>
+    {% for product in products %}
+        <li>
+            商品货号: {{ product.product_id }} | 名称: {{ product.name }} | 单价: {{ product.price }}
+            <form method="POST" action="{{ url_for('sales_bp.process_sale') }}">
+                <label for="size_{{ product.product_id }}">选择尺码:</label>
+                <select id="size_{{ product.product_id }}" name="size_{{ product.product_id }}">
+                    {% for size in product.sizes %}
+                        <option value="{{ size.size }}">{{ size.size }} (库存: {{ size.number }})</option>
+                    {% endfor %}
+                </select>
+                <label for="quantity_{{ product.product_id }}">数量:</label>
+                <input type="number" id="quantity_{{ product.product_id }}" name="quantity_{{ product.product_id }}" min="1" value="1">
+                <label for="discount_{{ product.product_id }}">折扣(%):</label>
+                <input type="number" id="discount_{{ product.product_id }}" name="discount_{{ product.product_id }}" value="100">
+                <span>小计: <span id="subtotal_{{ product.product_id }}"></span></span>
+                <button type="button" onclick="removeProduct({{ loop.index0 }})">删除</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+
+    <form method="POST" action="{{ url_for('sales_bp.process_sale') }}">
+        <label for="member_phone">会员电话:</label>
+        <input type="text" id="member_phone" name="member_phone" onchange="checkMember()">
+        <button type="submit">收款</button>
+    </form>
+    <form method="POST" action="{{ url_for('sales_bp.clear_products') }}">
+        <button type="submit">清空所购商品</button>
+    </form>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <script>
+        function removeProduct(index) {
+            fetch("{{ url_for('sales_bp.remove_product', index='') }}" + index, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            });
+        }
+
+        function checkMember() {
+            var member_phone = document.getElementById('member_phone').value;
+            fetch("{{ url_for('sales_bp.check_member') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'member_phone': member_phone
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.valid) {
+                    alert(data.message);
+                    document.getElementById('member_phone').value = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

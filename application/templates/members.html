@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会员管理</title>
+</head>
+<body>
+    <h1>会员管理</h1>
+
+    <form method="POST" action="{{ url_for('members.manage_members') }}">
+        <label for="member_phone">会员号码:</label>
+        <input type="text" id="member_phone" name="member_phone" required>
+        <label for="name">会员名称:</label>
+        <input type="text" id="name" name="name">
+        <label for="sex">性别:</label>
+        <select id="sex" name="sex">
+            <option value="男">男</option>
+            <option value="女">女</option>
+        </select>
+        <button type="submit" name="action" value="query">查询</button>
+        <button type="submit" name="action" value="add">新增</button>
+        <button type="submit" name="action" value="update">修改</button>
+    </form>
+
+    {% if member %}
+    <h2>会员信息</h2>
+    <p>会员号码: {{ member.member_phone }}</p>
+    <p>会员名称: {{ member.name }}</p>
+    <p>性别: {{ member.sex }}</p>
+    <p>积分: {{ member.integral }}</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+</html>

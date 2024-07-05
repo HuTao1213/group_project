@@ -1,0 +1,14 @@
+<table>
+    <tr>
+        <th>品名</th>
+        <th>销售数量</th>
+        <th>销售总额</th>
+    </tr>
+    {% for item in summary %}
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.total_quantity }}</td>
+        <td>{{ item.total_sales }}</td>
+    </tr>
+    {% endfor %}
+</table>

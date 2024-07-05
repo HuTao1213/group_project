@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>销售报告</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>销售报告</h1>
+    <p>今日销售总额: {{ total_sales_today }} 元</p>
+    <p>当月销售总额: {{ total_sales_month }} 元</p>
+    <p>今年销售总额: {{ total_sales_year }} 元</p>
+    <p>会员客户总数: {{ member_customers_count }}</p>
+    <p>购买客户数: {{ purchasing_customers_count }}</p>
+
+    <button onclick="fetchData('details')">明细查询</button>
+    <button onclick="fetchData('returned')">退货记录</button>
+    <button onclick="fetchData('summary')">分类汇总</button>
+
+    <div id="content">
+        <!-- 数据显示区域 -->
+    </div>
+
+    <!-- 退货弹窗 -->
+    <div id="returnModal" style="display:none;">
+        <form id="returnForm">
+            <input type="hidden" name="sale_id" id="sale_id">
+            <p>货号: <span id="product_id"></span></p>
+            <p>品名: <span id="product_name"></span></p>
+            <p>数量: <span id="product_quantity"></span></p>
+            <p>退款金额: <span id="refund_amount"></span></p>
+            <button type="submit">确认退货</button>
+        </form>
+    </div>
+
+    <script>
+        function fetchData(type) {
+            $.ajax({
+                url: `/reports/${type}`,
+                method: 'GET',
+                success: function(data) {
+                    $('#content').html(data);
+                }
+            });
+        }
+
+        function showReturnModal(saleId, productId, productName, productQuantity, refundAmount) {
+            $('#sale_id').val(saleId);
+            $('#product_id').text(productId);
+            $('#product_name').text(productName);
+            $('#product_quantity').text(productQuantity);
+            $('#refund_amount').text(refundAmount);
+            $('#returnModal').show();
+        }
+
+        $(document).on('submit', '#returnForm', function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/reports/returns',
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    alert('退货成功');
+                    $('#returnModal').hide();
+                    fetchData('details');
+                },
+                error: function(error) {
+                    alert('退货失败');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
